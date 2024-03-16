@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "prefab-ffmpeg"
 include(":app")
- 
+include(":prefab-ffmpeg")
