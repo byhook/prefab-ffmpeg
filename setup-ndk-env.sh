@@ -13,8 +13,6 @@
 #NDK_ROOT=~/Library/android/sdk/ndk/18.1.5063045
 NDK_ROOT=$ANDROID_HOME/ndk/25.2.9519653
 
-ls -l ${$ANDROID_HOME}/ndk
-
 echo "setup-ndk-env ${NDK_ROOT} abi: "$1
 
 #校验当前操作系统-目前只支持linux和macOS
@@ -46,17 +44,21 @@ function file_exit {
 function export_env_new_target {
     TARGET_ABI=$1
     case $TARGET_ABI in
-        arm64-v8a)
+        armv8|armv8a|aarch64|arm64|arm64-v8a)
             TOOLCHAIN_BASE=aarch64-linux-android
+            TOOL_NAME_BASE=aarch64-linux-android
         ;;
         armeabi-v7a)
             TOOLCHAIN_BASE=armv7a-linux-androideabi
+            TOOL_NAME_BASE=arm-linux-androideabi
         ;;
         x86_64)
             TOOLCHAIN_BASE=x86_64-linux-android
+            TOOL_NAME_BASE=x86_64-linux-android
         ;;
         x86)
             TOOLCHAIN_BASE=i686-linux-android
+            TOOL_NAME_BASE=i686-linux-android
         ;;
         *)
             echo "Unsupported ABI."$TARGET_ABI
@@ -81,7 +83,8 @@ function export_env_new {
     export LD=${TOOLCHAIN}/bin/ld
     export RANLIB=${TOOLCHAIN}/bin/llvm-ranlib
     export STRIP=${TOOLCHAIN}/bin/llvm-strip
-    
+    export SYSROOT=${TOOLCHAIN}/sysroot
+
     file_exit "AR=" $AR
     file_exit "CC=" $CC
     file_exit "AS=" $AS
@@ -89,13 +92,14 @@ function export_env_new {
     file_exit "LD=" $LD
     file_exit "RANLIB=" $RANLIB
     file_exit "STRIP=" $STRIP
+    echo "SYSROOT="$SYSROOT
 }
 
 #适用于NDK版本在19以下
 function export_env_old_target {
     TARGET_ABI=$1
     case $TARGET_ABI in
-        arm64-v8a)
+        armv8|armv8a|aarch64|arm64|arm64-v8a)
             TOOLCHAIN_BASE=aarch64-linux-android
             TOOL_NAME_BASE=aarch64-linux-android
         ;;
