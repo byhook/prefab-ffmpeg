@@ -39,7 +39,6 @@ function build_library {
     --disable-shared \
     --disable-asm \
     --disable-x86asm \
-    --disable-avdevice \
     --disable-postproc \
     --disable-cuvid \
     --disable-nvenc \
@@ -66,7 +65,7 @@ function build_library {
     --extra-cflags="-Os -fpic -DVK_ENABLE_BETA_EXTENSIONS=0 $OPTIMIZE_CFLAGS" \
     --extra-ldflags="$ADDI_LDFLAGS"
 
-    make clean all
+    make clean
     #构建并安装
     make -j4 install
     #去掉符号信息
