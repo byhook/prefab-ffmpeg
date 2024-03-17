@@ -56,8 +56,8 @@ function build_library {
     --arch=$ABI \
     --cc=$CC \
     --cxx=$CXX \
-    --ar=$TOOLCHAIN/bin/llvm-ar \
-    --nm=$TOOLCHAIN/bin/llvm-nm \
+    --ar=$AR \
+    --nm=$NM \
     --ranlib=$RANLIB \
     --strip=$STRIP \
     --enable-cross-compile \

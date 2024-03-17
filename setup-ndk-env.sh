@@ -77,6 +77,7 @@ function export_env_new {
     export TOOLCHAIN=$NDK_ROOT/toolchains/llvm/prebuilt/${NDK_HOST_TAG}
     
     export AR=${TOOLCHAIN}/bin/llvm-ar
+    export NM=${TOOLCHAIN}/bin/llvm-nm
     export CC=${TOOLCHAIN}/bin/${TOOLCHAIN_BASE}${API}-clang
     export AS=$CC
     export CXX=${TOOLCHAIN}/bin/${TOOLCHAIN_BASE}${API}-clang++
@@ -86,6 +87,7 @@ function export_env_new {
     export SYSROOT=${TOOLCHAIN}/sysroot
 
     file_exit "AR=" $AR
+    file_exit "NM=" $NM
     file_exit "CC=" $CC
     file_exit "AS=" $AS
     file_exit "CXX=" $CXX
@@ -130,6 +132,7 @@ function export_env_old {
     TOOLCHAIN=${NDK_ROOT}/toolchains/${TOOLCHAIN_BASE}-4.9/prebuilt/${NDK_HOST_TAG}
     
     export AR=${TOOLCHAIN}/bin/${TOOL_NAME_BASE}-ar
+    export NM=${TOOLCHAIN}/bin/${TOOL_NAME_BASE}-nm
     export CC=${TOOLCHAIN}/bin/${TOOL_NAME_BASE}-gcc
     export AS=$CC
     export CXX=${TOOLCHAIN}/bin/${TOOL_NAME_BASE}-g++
@@ -138,6 +141,7 @@ function export_env_old {
     export STRIP=${TOOLCHAIN}/bin/${TOOL_NAME_BASE}-strip
 
     file_exit "AR=" $AR
+    file_exit "NM=" $NM
     file_exit "CC=" $CC
     file_exit "AS=" $AS
     file_exit "CXX=" $CXX
@@ -147,7 +151,7 @@ function export_env_old {
 }
 
 #用来判断NDK版本是否为19及以上
-NDK_NEW_LLVM_CONFIG=${NDK_ROOT}/toolchains/llvm/prebuilt/${NDK_HOST_TAG}/bin/llvm-config
+export NDK_NEW_LLVM_CONFIG=${NDK_ROOT}/toolchains/llvm/prebuilt/${NDK_HOST_TAG}/bin/llvm-config
 
 if [ -f "${NDK_NEW_LLVM_CONFIG}" ];then
     #NDK版本为19及以上
