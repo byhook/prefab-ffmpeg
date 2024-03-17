@@ -4,6 +4,8 @@ CURRENT_DIR=$(pwd)
 BUILD_DIR=$CURRENT_DIR/build
 SOURCE_CODE_DIR=$BUILD_DIR/ffmpeg
 
+TARGET_BUILD_DIR=$CURRENT_DIR/../build
+
 if [ "`ls -A $SOURCE_CODE_DIR`" = "" ]; then
     echo "$SOURCE_CODE_DIR is empty"
     rm -rf $SOURCE_CODE_DIR
@@ -20,33 +22,37 @@ function build_library {
     ABI=$1
     HOST=$2
 
-    BUILD_DIR=$CURRENT_DIR/../build/
-    mkdir -p $BUILD_DIR
-
-    export CFLAGS="-fPIE -fPIC"
-    export LDFLAGS="-pie"
+    mkdir -p $TARGET_BUILD_DIR
 
     ./configure \
-    --prefix=$BUILD_DIR \
-    --enable-postproc \
-    --enable-debug \
-    --disable-asm \
-    --enable-symver \
-    --enable-static \
-    --enable-shared \
-    --enable-neon \
-    --enable-hwaccels \
-    --enable-jni \
-    --enable-mediacodec \
-    --enable-decoder=h264_mediacodec \
-    --enable-decoder=hevc_mediacodec \
-    --enable-decoder=mpeg4_mediacodec \
-    --cross-prefix=$TOOL_NAME_BASE- \
+    --prefix=$TARGET_BUILD_DIR \
+    --bindir=$TARGET_BUILD_DIR/bin \
+    --libdir=$TARGET_BUILD_DIR/libs/$ABI \
     --disable-doc \
+    --disable-htmlpages \
+    --disable-manpages \
+    --disable-podpages \
+    --disable-txtpages \
     --disable-ffplay \
     --disable-ffprobe \
-    --disable-ffmpeg \
+    --disable-symver \
+    --disable-shared \
+    --disable-asm \
+    --disable-x86asm \
     --disable-avdevice \
+    --disable-postproc \
+    --disable-cuvid \
+    --disable-nvenc \
+    --disable-vaapi \
+    --disable-vdpau \
+    --disable-videotoolbox \
+    --disable-audiotoolbox \
+    --disable-appkit \
+    --disable-avfoundation \
+    --enable-cross-compile \
+    --enable-static \
+    --enable-shared \
+    --cross-prefix=$TOOL_NAME_BASE- \
     --target-os=android \
     --arch=$ABI \
     --cc=$CC \

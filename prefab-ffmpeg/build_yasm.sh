@@ -4,6 +4,8 @@ CURRENT_DIR=$(pwd)
 BUILD_DIR=$CURRENT_DIR/build
 SOURCE_CODE_DIR=$BUILD_DIR/yasm
 
+TARGET_BUILD_DIR=$CURRENT_DIR/../build
+BUILD_CACHE=$TARGET_BUILD_DIR/build-cache
 
 if [ "`ls -A $SOURCE_CODE_DIR`" = "" ]; then
     echo "$SOURCE_CODE_DIR is empty"
@@ -15,11 +17,12 @@ else
     echo "$SOURCE_CODE_DIR is not empty"
 fi
 
+
 cd $SOURCE_CODE_DIR
 
 ./autogen.sh
 ./configure \
-    --prefix=$BUILD_DIR/cache \
+    --prefix=$BUILD_CACHE \
     --bindir="$BUILD_DIR/bin" \
 
 make clean all
