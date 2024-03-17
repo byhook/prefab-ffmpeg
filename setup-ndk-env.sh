@@ -11,7 +11,7 @@
 
 
 #NDK_ROOT=~/Library/android/sdk/ndk/18.1.5063045
-NDK_ROOT=$ANDROID_HOME/ndk/25.2.9519653
+export NDK_ROOT=$ANDROID_HOME/ndk/25.2.9519653
 
 echo "setup-ndk-env ${NDK_ROOT} abi: "$1
 
@@ -28,6 +28,9 @@ else
     echo "Unsupported OS."
     exit
 fi
+
+export TOOLCHAIN_PATH=${NDK_PATH}/toolchains/llvm/prebuilt/$NDK_HOST_TAG
+echo $TOOLCHAIN_PATH
 
 # 目标文件是否存在
 function file_exit {
