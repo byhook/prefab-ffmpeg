@@ -6,7 +6,7 @@
 bash build_lame.sh
 
 #库名称：lib${LIB_NAME}.so
-LIB_NAME=lame
+LIB_NAME=ffmpeg
 #版本号：必须全数字
 LIB_VERSION=3.100.0
 
@@ -18,7 +18,7 @@ ABIS=("arm64-v8a" "armeabi-v7a" "x86_64" "x86")
 
 TARGET_BUILD_DIR=$(pwd)/../build
 
-TARGET_ROOT_PREFAB_DIR=$(pwd)/../build/prefab-lame
+TARGET_ROOT_PREFAB_DIR=$(pwd)/../build/prefab-ffmpeg
 
 rm -rf $TARGET_ROOT_PREFAB_DIR
 
@@ -38,7 +38,7 @@ function copy_libs {
 
     # 复制目标文件
     cp $TARGET_BUILD_DIR/libs/$TARGET_ABI/*.$SUFFIX_NAME \
-      $TARGET_ANDROID_ABI_DIR/lib$LIB_NAME.$SUFFIX_NAME
+      $TARGET_ANDROID_ABI_DIR/
 
     echo "TARGET_ABI => "$TARGET_BUILD_DIR/libs/$TARGET_ABI
     echo "TARGET_ANDROID_ABI_DIR => "$TARGET_ANDROID_ABI_DIR
