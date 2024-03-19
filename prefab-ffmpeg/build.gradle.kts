@@ -1,5 +1,6 @@
-import groovy.json.JsonOutput
+import com.google.gson.GsonBuilder
 import org.apache.commons.io.FileUtils
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 import java.nio.file.Paths
 
 plugins {
@@ -69,8 +70,27 @@ val libraryList = mutableListOf(
     "swscale",
 )
 
-class Module {
+class ModuleJson {
+    var export_libraries: List<String> = mutableListOf()
+    var android: AndroidData = AndroidData()
 
+    class AndroidData {
+        var library_name: String = ""
+        var export_libraries: List<String> = mutableListOf()
+    }
+
+}
+
+class AbiJson {
+    var abi: String = "arm64-v8a"
+    var api: Int = 21
+    var ndk: Int = 25
+    var stl: String = "c++_shared"
+    var static: Boolean = false
+}
+
+fun jsonFormat(target: Any): String {
+    return GsonBuilder().setPrettyPrinting().create().toJson(target)
 }
 
 tasks.register("generateModules") {
@@ -91,23 +111,44 @@ tasks.register("generateModules") {
             mkdir(libsDir)
             mkdir(incsDir)
             //拷贝头文件目录
-            val targetIncludeFile = rootProject.layout.buildDirectory.dir("include").get().dir("lib$libName")
+            val targetIncludeFile =
+                rootProject.layout.buildDirectory.dir("include").get().dir("lib$libName")
             FileUtils.copyDirectory(targetIncludeFile.asFile, incsDir.dir("lib$libName").asFile)
             //拷贝库目录
             val targetLibraryFile = libsDir.dir("android.$abiName")
             val sourceLibraryFile = rootProject.layout.buildDirectory.dir("libs").get().dir(abiName)
             file(sourceLibraryFile.file("lib$libName.so").asFile)
                 .copyTo(targetLibraryFile.file("lib$libName.so").asFile)
-            //生成module.json文件
 
+            //生成abi.json文件
+            var abiJson = AbiJson().apply {
+                this.abi = abiName
+                /*
+                this.stl
+                this.static
+                 */
+            }
+            val abiFormatResult = jsonFormat(abiJson)
+            file(targetLibraryFile.file("abi.json")).writeText(abiFormatResult)
+            //生成module.json文件
+            val moduleJson = ModuleJson().apply {
+                this.android.library_name = libName
+            }
+            val moduleFormatResult = jsonFormat(moduleJson)
+            file(libNameDir.file("module.json")).writeText(moduleFormatResult)
         }
     }
+    //生成prefab.json文件
+    val prefab = Prefab()
+    val result = jsonFormat(prefab)
+    println("generate prefab.json: $result")
+    file(prefabDir.file("prefab.json")).writeText(result)
 }
 
 class Prefab {
     var schema_version: Int = 2
-    var name: String = ""
-    var version: String = ""
+    var name: String = "ffmpeg"
+    var version: String = "6.0.1"
     var dependencies: List<String> = mutableListOf()
 }
 
@@ -119,14 +160,6 @@ tasks.register<Copy>("generateAndroidManifest") {
     destinationDir = targetPrefabDir.get().asFile
 }
 
-tasks.register<Copy>("combinePrefab") {
-    println("combinePrefab ===========================>")
-    val prefab = Prefab()
-    val result = JsonOutput.toJson(prefab)
-    println("combinePrefab ===========================>$result")
-}
-
-
 tasks.register<Zip>("packagePrefab") {
     //先删除原目录
     delete(targetPrefabDir)
@@ -136,21 +169,11 @@ tasks.register<Zip>("packagePrefab") {
     println("packagePrefab ===========================>")
     dependsOn(tasks.getByName("generateModules"))
     dependsOn(tasks.getByName("generateAndroidManifest"))
-    /*
-    archivesName = "hello"
-    from(rootProject.layout.buildDirectory.dir("prefab-ffmpeg"))
-    destinationDirectory = rootProject.layout.buildDirectory.dir("world")
-     */
+    archivesName = "ffmpeg-6.0.1"
+    archiveExtension = "aar"
+    from(targetPrefabDir)
+    destinationDirectory = rootProject.layout.buildDirectory.dir("outputs")
 }
-
-
-
-
-
-
-
-
-
 
 
 tasks.register("buildArtifact") {
