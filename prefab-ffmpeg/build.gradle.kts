@@ -1,6 +1,5 @@
 import groovy.json.JsonOutput
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
-import org.jetbrains.kotlin.ir.types.IdSignatureValues.result
+import org.apache.commons.io.FileUtils
 import java.nio.file.Paths
 
 plugins {
@@ -55,19 +54,57 @@ tasks.register<Exec>("buildPrefab") {
     commandLine = mutableListOf("bash", targetFile.absolutePath)
 }
 
+val abiList = mutableListOf(
+    "arm64-v8a",
+    //"armeabi-v7a"
+)
+
+val libraryList = mutableListOf(
+    "avcodec",
+    "avdevice",
+    "avfilter",
+    "avformat",
+    "avutil",
+    "swresample",
+    "swscale",
+)
+
+class Module {
+
+}
 
 tasks.register("generateModules") {
     println("generateModules")
     //重新创建一次
     val prefabDir = targetPrefabDir.get().dir("prefab")
     mkdir(prefabDir)
-    mkdir(prefabDir.dir("modules"))
+    val modulesDir = prefabDir.dir("modules")
+    mkdir(modulesDir)
+    //遍历ABI列表
+    abiList.forEach { abiName ->
+        libraryList.forEach { libName ->
+            //例如：modules/lame
+            val libNameDir = modulesDir.dir(libName)
+            mkdir(libNameDir)
+            val libsDir = libNameDir.dir("libs")
+            val incsDir = libNameDir.dir("include")
+            mkdir(libsDir)
+            mkdir(incsDir)
+            //拷贝头文件目录
+            val targetIncludeFile = rootProject.layout.buildDirectory.dir("include").get().dir("lib$libName")
+            FileUtils.copyDirectory(targetIncludeFile.asFile, incsDir.dir("lib$libName").asFile)
+            //拷贝库目录
+            val targetLibraryFile = libsDir.dir("android.$abiName")
+            val sourceLibraryFile = rootProject.layout.buildDirectory.dir("libs").get().dir(abiName)
+            file(sourceLibraryFile.file("lib$libName.so").asFile)
+                .copyTo(targetLibraryFile.file("lib$libName.so").asFile)
+            //生成module.json文件
 
-
-
+        }
+    }
 }
 
-inner class Prefab {
+class Prefab {
     var schema_version: Int = 2
     var name: String = ""
     var version: String = ""
