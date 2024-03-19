@@ -1,23 +1,24 @@
 #!/bin/sh
 
 #参考文档
+#https://developer.android.com/build/native-dependencies?hl=zh-cn
 #https://developer.android.com/studio/build/native-dependencies?hl=zh-cn&buildsystem=ndk-build
 
-bash build_lame.sh
+#bash build_ffmpeg.sh
 
 #库名称：lib${LIB_NAME}.so
 LIB_NAME=ffmpeg
 #版本号：必须全数字
-LIB_VERSION=3.100.0
+LIB_VERSION=6.0.1
 
 #相关版本号配置
-MIN_ABI=21
+MIN_API=21
 NDK_VERSION=25
 
 ABIS=("arm64-v8a" "armeabi-v7a" "x86_64" "x86")
-
+#构建产物的最终目录
 TARGET_BUILD_DIR=$(pwd)/../build
-
+#预构建库的目录
 TARGET_ROOT_PREFAB_DIR=$(pwd)/../build/prefab-ffmpeg
 
 rm -rf $TARGET_ROOT_PREFAB_DIR
@@ -33,6 +34,7 @@ function copy_libs {
     SUFFIX_NAME=$2  #后缀名
     STATIC=$3
 
+    #
     TARGET_ANDROID_ABI_DIR=$TARGET_PREFAB_DIR/modules/$LIB_NAME.$SUFFIX_NAME/libs/android.$TARGET_ABI
     mkdir -p $TARGET_ANDROID_ABI_DIR
 
@@ -43,15 +45,21 @@ function copy_libs {
     echo "TARGET_ABI => "$TARGET_BUILD_DIR/libs/$TARGET_ABI
     echo "TARGET_ANDROID_ABI_DIR => "$TARGET_ANDROID_ABI_DIR
 
+    if [ $STATIC = true ]; then
+        export STL_LIB="c++_static"
+    else
+        export STL_LIB="c++_shared"
+    fi
+
     # 生成abi.json文件
     # 配置目录 prefab/modules/$libName/libs/android.$abi/abi.json
     pushd $TARGET_ANDROID_ABI_DIR
     echo "{
     \"abi\":\"$TARGET_ABI\",
-    \"api\":$MIN_ABI,
+    \"api\":$MIN_API,
     \"ndk\":$NDK_VERSION,
-    \"stl\":\"c++_shared\",
-    \"static\": $STATIC
+    \"stl\":"\"$STL_LIB"\",
+    \"static\":$STATIC
     }" > $TARGET_ANDROID_ABI_DIR/abi.json
     popd
 }
