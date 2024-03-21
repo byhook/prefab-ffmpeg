@@ -1,6 +1,14 @@
 pluginManagement {
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.toString() == "io.github.byhook.prefab") {
+                useModule("com.github.byhook:prefab-plugin:${requested.version}")
+            }
+        }
+    }
     repositories {
         mavenLocal()
+        maven { url = uri("https://jitpack.io") }
         google {
             content {
                 includeGroupByRegex("com\\.android.*")
@@ -16,6 +24,7 @@ dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         mavenLocal()
+        maven { url = uri("https://jitpack.io") }
         google()
         mavenCentral()
     }
