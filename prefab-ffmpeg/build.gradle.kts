@@ -1,8 +1,4 @@
-import com.google.gson.GsonBuilder
-import io.github.byhook.prefab.task.GeneratePrefabTask
-import org.apache.commons.io.FileUtils
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
-import java.nio.file.Paths
+import io.github.byhook.prefab.extension.PrefabLibraryType
 
 plugins {
     alias(libs.plugins.androidLibrary)
@@ -56,7 +52,7 @@ tasks.register<Exec>("crossCompile") {
 
 generatePrefab {
     //前置依赖交叉构建完成
-    dependsOn("crossCompile")
+    //dependsOn("crossCompile")
     //配置基础信息
     val rootBuildDir = rootProject.layout.buildDirectory
     //交叉编译生成的库目录
@@ -79,34 +75,47 @@ generatePrefab {
         .dir("main")
         .file("AndroidManifest.xml")
         .asFile
-    module("avcodec.so", false) {
-        this.libraryName = "libavcodec"
-        this.libraryFileName = "libavcodec.so"
+    //库名与文件名相同
+
+    val listNameList = mutableListOf("avcodec", "avdevice", "avfilter", "avformat", "avutil", "swresample", "swscale")
+    modules(listNameList, PrefabLibraryType.ALL) {
+        includeSubDirName = libraryName
     }
-    module("avdevice.so", false) {
-        this.libraryName = "libavdevice"
-        this.libraryFileName = "libavdevice.so"
+    /*
+    module("avcodec", PrefabLibMode.LIB_MODE_DYNAMIC) {
+        this.includeSubDirName = "libavcodec"
     }
-    module("avfilter.so", false) {
-        this.libraryName = "libavfilter"
-        this.libraryFileName = "libavfilter.so"
+    module("avdevice", PrefabLibMode.LIB_MODE_DYNAMIC) {
+        this.includeSubDirName = "libavdevice"
     }
-    module("avformat.so", false) {
-        this.libraryName = "libavformat"
-        this.libraryFileName = "libavformat.so"
+    module("avfilter", PrefabLibMode.LIB_MODE_DYNAMIC) {
+        this.includeSubDirName = "libavfilter"
     }
-    module("avutil.so", false) {
-        this.libraryName = "libavutil"
-        this.libraryFileName = "libavutil.so"
+    module("avformat", PrefabLibMode.LIB_MODE_DYNAMIC) {
+        this.includeSubDirName = "libavformat"
     }
-    module("swresample.so", false) {
-        this.libraryName = "libswresample"
-        this.libraryFileName = "libswresample.so"
+    module("avutil", PrefabLibMode.LIB_MODE_DYNAMIC) {
+        this.includeSubDirName = "libavutil"
     }
-    module("swscale.so", false) {
-        this.libraryName = "libswscale"
-        this.libraryFileName = "libswscale.so"
+    module("swresample", PrefabLibMode.LIB_MODE_DYNAMIC) {
+        this.includeSubDirName = "libswresample"
     }
+    module("swscale", PrefabLibMode.LIB_MODE_DYNAMIC) {
+        this.includeSubDirName = "libswscale"
+    }
+    */
+    /*
+    val listNameMap = mutableMapOf(
+        "avcodec" to "avcodec",
+        "avdevice" to "avdevice",
+        "avfilter" to "avfilter",
+        "avformat" to "libavformat",
+        "avutil" to "libavutil",
+        "swresample" to "libswresample",
+        "swscale" to "libswscale",
+    )
+    modules(listNameMap, PrefabLibMode.LIB_MODE_ALL)
+     */
 }
 
 publishing {
@@ -114,7 +123,7 @@ publishing {
         register<MavenPublication>("release") {
             groupId = "io.github.byhook"
             artifactId = "prefab-ffmpeg"
-            version = "6.0.1.3"
+            version = "6.0.1.6"
             afterEvaluate {
                 artifact(tasks.named("generatePrefabTask"))
             }
