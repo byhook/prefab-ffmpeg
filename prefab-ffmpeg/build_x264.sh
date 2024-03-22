@@ -1,34 +1,32 @@
 #!/bin/bash
 
-CURRENT_DIR=$(pwd)
-BUILD_DIR=$CURRENT_DIR/build
-SOURCE_CODE_DIR=$BUILD_DIR/x264-stable
+#同步镜像源代码
+source ../setup-source-env.sh \
+     x264-stable
 
-TARGET_BUILD_DIR=$CURRENT_DIR/../build
-BUILD_PREFIX=$TARGET_BUILD_DIR/build-prefix
-
-if [ "`ls -A $SOURCE_CODE_DIR`" = "" ]; then
-    echo "$SOURCE_CODE_DIR is empty"
-    rm -rf $SOURCE_CODE_DIR
-    mkdir -p $SOURCE_CODE_DIR
+if [ "`ls -A $sourceCodeDir`" = "" ]; then
+    echo "$sourceCodeDir is empty"
+    rm -rf $sourceCodeDir
+    mkdir -p $sourceCodeDir
     # 克隆代码到build目录下
-    git clone --branch stable --depth 1 https://code.videolan.org/videolan/x264.git $SOURCE_CODE_DIR
+    git clone --branch stable --depth 1 https://code.videolan.org/videolan/x264.git $sourceCodeDir
 else
-    echo "$SOURCE_CODE_DIR is not empty"
+    echo "$sourceCodeDir is not empty"
 fi
 
-cd $SOURCE_CODE_DIR
+cd $sourceCodeDir
 
 function build_library {
-    TARGET_ABI=$1
+    #目标abi
+    targetAbi=$1
 
-    mkdir -p $TARGET_BUILD_DIR/include/x264
+    mkdir -p $targetBuildDir/include/x264
 
     ./configure \
-    --prefix="$BUILD_PREFIX" \
-    --bindir="$TARGET_BUILD_DIR/bin" \
-    --libdir=$TARGET_BUILD_DIR/libs/$TARGET_ABI \
-    --includedir=$TARGET_BUILD_DIR/include/x264 \
+    --prefix="$buildPrefix" \
+    --bindir="$buildPrefix/bin" \
+    --libdir=$buildPrefix/libs/$targetAbi \
+    --includedir=$buildPrefix/include/x264 \
     --enable-static \
     --enable-shared \
     --enable-pic \
@@ -43,15 +41,20 @@ function build_library {
 
     make clean
     make -j4 install
+
+    pushd $buildPrefix/libs/$targetAbi
+    rm -r libx264.so
+    mv libx264.so.* libx264.so
+    popd
 }
 
 
 ABI_LIST="arm64-v8a armeabi-v7a x86_64 x86"
 abiArray=(${ABI_LIST// / })
 
-for currentAbi in ${abiArray[@]}
+for targetAbi in ${abiArray[@]}
 do
-   echo $currentAbi
-   source $CURRENT_DIR/../setup-ndk-env.sh $currentAbi
-   build_library $currentAbi $TOOL_NAME_BASE
+   echo $targetAbi
+   source $currentDir/../setup-ndk-env.sh $targetAbi
+   build_library $targetAbi $TOOL_NAME_BASE
 done
