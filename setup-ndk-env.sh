@@ -88,7 +88,11 @@ function export_env_new {
     export_env_new_target $TARGET_ABI
 
     # 根据当前机器类型选择构建工具链 darwin-x86_64/linux-x86_64
-    export TOOLCHAIN=$NDK_ROOT/toolchains/llvm/prebuilt/${NDK_HOST_TAG}
+    TOOLCHAIN=$NDK_ROOT/toolchains/llvm/prebuilt/${NDK_HOST_TAG}
+
+    SYSROOT=$TOOLCHAIN/sysroot
+
+    CROSS_PREFIX=$TOOLCHAIN/bin/llvm-
 
     export AR=${TOOLCHAIN}/bin/llvm-ar
     export CC=${TOOLCHAIN}/bin/${TOOLCHAIN_BASE}${API}-clang
@@ -144,6 +148,10 @@ function export_env_old {
 
     TOOLCHAIN=${NDK_ROOT}/toolchains/${TOOLCHAIN_BASE}-4.9/prebuilt/${NDK_HOST_TAG}
 
+    SYSROOT=$TOOLCHAIN/sysroot
+
+    CROSS_PREFIX=$TOOLCHAIN/bin/$TOOLCHAIN_BASE-
+
     export AR=${TOOLCHAIN}/bin/${TOOL_NAME_BASE}-ar
     export CC=${TOOLCHAIN}/bin/${TOOL_NAME_BASE}-gcc
     export AS=$CC
@@ -173,3 +181,8 @@ else
     echo "ndk version < 19 abi: "$1
     export_env_old $1
 fi
+echo "--------"
+echo "SYSROOT:"$SYSROOT
+echo "TOOLCHAIN="$TOOLCHAIN
+echo "SYSROOT="$SYSROOT
+echo "CROSS_PREFIX="$CROSS_PREFIX

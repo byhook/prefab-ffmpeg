@@ -21,9 +21,9 @@ cd $SOURCE_CODE_DIR
 
 ./autogen.sh
 ./configure \
-    --prefix=$BUILD_CACHE \
-    --bindir="$BUILD_DIR/bin" \
+    --prefix=$TARGET_BUILD_DIR \
+    --bindir="$TARGET_BUILD_DIR/bin" \
 
-make clean all
+make clean
 make -j4 install
 
