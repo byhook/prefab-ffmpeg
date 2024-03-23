@@ -10,7 +10,7 @@
 
 #NDK_ROOT=~/Library/android/sdk/ndk/18.1.5063045
 #NDK_ROOT=$ANDROID_HOME/ndk/25.2.9519653
-NDK_ROOT=$ANDROID_HOME/ndk/22.1.7171670
+NDK_ROOT=$ANDROID_HOME/ndk/25.2.9519653
 
 echo "setup-ndk-env ${NDK_ROOT} abi: "$1
 
@@ -101,6 +101,7 @@ function export_env_new {
     export LD=${TOOLCHAIN}/bin/ld
     export RANLIB=${TOOLCHAIN}/bin/llvm-ranlib
     export STRIP=${TOOLCHAIN}/bin/llvm-strip
+    export NM=${TOOLCHAIN}/bin/llvm-nm
 
     file_exit "AR=" $AR
     file_exit "CC=" $CC
@@ -109,6 +110,7 @@ function export_env_new {
     file_exit "LD=" $LD
     file_exit "RANLIB=" $RANLIB
     file_exit "STRIP=" $STRIP
+    file_exit "NM=" $NM
 }
 
 #适用于NDK版本在19以下
@@ -159,6 +161,7 @@ function export_env_old {
     export LD=${TOOLCHAIN}/bin/${TOOL_NAME_BASE}-ld
     export RANLIB=${TOOLCHAIN}/bin/${TOOL_NAME_BASE}-ranlib
     export STRIP=${TOOLCHAIN}/bin/${TOOL_NAME_BASE}-strip
+    export NM=${TOOLCHAIN}/bin/${TOOL_NAME_BASE}-nm
 
     file_exit "AR=" $AR
     file_exit "CC=" $CC
@@ -167,18 +170,19 @@ function export_env_old {
     file_exit "LD=" $LD
     file_exit "RANLIB=" $RANLIB
     file_exit "STRIP=" $STRIP
+    file_exit "NM=" $NM
 }
 
 #用来判断NDK版本是否为19及以上
 NDK_NEW_LLVM_CONFIG=${NDK_ROOT}/toolchains/llvm/prebuilt/${NDK_HOST_TAG}/bin/llvm-config
 
-if [ -f "${NDK_NEW_LLVM_CONFIG}" ];then
+if [ $NDK_MAJOR_VERSION -gt 22 ];then
     #NDK版本为19及以上
-    echo "ndk version >= 19 abi: "$1
+    echo "ndk version > 22 abi: "$1
     export_env_new $1
 else
     #NDK版本为19以下
-    echo "ndk version < 19 abi: "$1
+    echo "ndk version <= 22 abi: "$1
     export_env_old $1
 fi
 echo "--------"
