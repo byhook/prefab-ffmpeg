@@ -52,7 +52,7 @@ tasks.register<Exec>("crossCompile") {
 
 generatePrefab {
     //前置依赖交叉构建完成
-    //dependsOn("crossCompile")
+    dependsOn("crossCompile")
     //配置基础信息
     val rootBuildDir = rootProject.layout.buildDirectory
     //交叉编译生成的库目录
@@ -81,41 +81,6 @@ generatePrefab {
     modules(listNameList, PrefabLibraryType.ALL) {
         includeSubDirName = libraryName
     }
-    /*
-    module("avcodec", PrefabLibMode.LIB_MODE_DYNAMIC) {
-        this.includeSubDirName = "libavcodec"
-    }
-    module("avdevice", PrefabLibMode.LIB_MODE_DYNAMIC) {
-        this.includeSubDirName = "libavdevice"
-    }
-    module("avfilter", PrefabLibMode.LIB_MODE_DYNAMIC) {
-        this.includeSubDirName = "libavfilter"
-    }
-    module("avformat", PrefabLibMode.LIB_MODE_DYNAMIC) {
-        this.includeSubDirName = "libavformat"
-    }
-    module("avutil", PrefabLibMode.LIB_MODE_DYNAMIC) {
-        this.includeSubDirName = "libavutil"
-    }
-    module("swresample", PrefabLibMode.LIB_MODE_DYNAMIC) {
-        this.includeSubDirName = "libswresample"
-    }
-    module("swscale", PrefabLibMode.LIB_MODE_DYNAMIC) {
-        this.includeSubDirName = "libswscale"
-    }
-    */
-    /*
-    val listNameMap = mutableMapOf(
-        "avcodec" to "avcodec",
-        "avdevice" to "avdevice",
-        "avfilter" to "avfilter",
-        "avformat" to "libavformat",
-        "avutil" to "libavutil",
-        "swresample" to "libswresample",
-        "swscale" to "libswscale",
-    )
-    modules(listNameMap, PrefabLibMode.LIB_MODE_ALL)
-     */
 }
 
 publishing {
