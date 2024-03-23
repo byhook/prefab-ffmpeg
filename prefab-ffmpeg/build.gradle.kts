@@ -46,6 +46,8 @@ dependencies {
 }
 
 tasks.register<Exec>("crossCompile") {
+    val jitpackVersion = version
+    println("jitpackVersion:$jitpackVersion")
     val targetFile = File(project.projectDir, "build_ffmpeg.sh")
     commandLine = mutableListOf("bash", targetFile.absolutePath)
 }
@@ -76,7 +78,6 @@ generatePrefab {
         .file("AndroidManifest.xml")
         .asFile
     //库名与文件名相同
-
     val listNameList = mutableListOf("avcodec", "avdevice", "avfilter", "avformat", "avutil", "swresample", "swscale")
     modules(listNameList, PrefabLibraryType.ALL) {
         includeSubDirName = libraryName
@@ -90,7 +91,7 @@ publishing {
             artifactId = "prefab-ffmpeg"
             version = "6.0.1.6"
             afterEvaluate {
-                artifact(tasks.named("generatePrefabTask"))
+                artifact(tasks.named("testCompile"))
             }
         }
     }

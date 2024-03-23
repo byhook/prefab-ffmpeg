@@ -27,12 +27,12 @@ function build_library {
     --bindir="$buildPrefix/bin" \
     --libdir=$buildPrefix/libs/$targetAbi \
     --includedir=$buildPrefix/include/x264 \
+    --disable-asm \
+    --disable-cli \
     --enable-static \
     --enable-shared \
     --enable-pic \
     --enable-strip \
-    --disable-asm \
-    --disable-cli \
     --host=$TOOLCHAIN_BASE \
     --cross-prefix=$CROSS_PREFIX \
     --sysroot=$SYSROOT \
