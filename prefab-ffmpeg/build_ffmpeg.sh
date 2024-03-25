@@ -28,6 +28,9 @@ fi
 
 cd $sourceCodeDir
 
+#注意事项
+#https://blog.csdn.net/humadivinity/article/details/111086563
+
 function build_library {
     targetAbi=$1
 
@@ -38,9 +41,10 @@ function build_library {
     --bindir=$targetBuildDir/bin \
     --libdir=$targetBuildDir/libs/$targetAbi \
     --disable-asm \
+    --disable-shared \
     --enable-cross-compile \
     --enable-static \
-    --enable-shared \
+    --enable-small \
     --enable-cross-compile \
     --cross-prefix=$TOOL_NAME_BASE- \
     --target-os=android \
@@ -50,10 +54,11 @@ function build_library {
     --ar=$AR \
     --nm=$NM \
     --ranlib=$RANLIB \
-    --strip=$STRIP \
     --sysroot=$SYSROOT \
     --extra-cflags="-Os -fpic -DVK_ENABLE_BETA_EXTENSIONS=0 $OPTIMIZE_CFLAGS" \
     --extra-ldflags="$ADDI_LDFLAGS"
+
+    #--strip=$STRIP \
 
     make clean
     #构建并安装

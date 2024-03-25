@@ -10,7 +10,7 @@
 
 #NDK_ROOT=~/Library/android/sdk/ndk/18.1.5063045
 #NDK_ROOT=$ANDROID_HOME/ndk/25.2.9519653
-NDK_ROOT=$ANDROID_HOME/ndk/25.2.9519653
+NDK_ROOT=$ANDROID_HOME/ndk/21.4.7075529
 
 echo "setup-ndk-env ${NDK_ROOT} abi: "$1
 
@@ -176,13 +176,13 @@ function export_env_old {
 #用来判断NDK版本是否为19及以上
 NDK_NEW_LLVM_CONFIG=${NDK_ROOT}/toolchains/llvm/prebuilt/${NDK_HOST_TAG}/bin/llvm-config
 
-if [ $NDK_MAJOR_VERSION -gt 22 ];then
+if [ $NDK_MAJOR_VERSION -gt 19 ];then
     #NDK版本为19及以上
-    echo "ndk version > 22 abi: "$1
+    echo "ndk version > 19 abi: "$1
     export_env_new $1
 else
     #NDK版本为19以下
-    echo "ndk version <= 22 abi: "$1
+    echo "ndk version <= 19 abi: "$1
     export_env_old $1
 fi
 echo "--------"
