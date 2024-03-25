@@ -40,11 +40,23 @@ function build_library {
     --prefix=$targetBuildDir \
     --bindir=$targetBuildDir/bin \
     --libdir=$targetBuildDir/libs/$targetAbi \
+    --disable-encoders \
+    --disable-decoders \
     --disable-asm \
     --disable-shared \
     --enable-cross-compile \
     --enable-static \
     --enable-small \
+    --enable-version3 \
+    --enable-pic \
+    --enable-pthreads \
+    --enable-encoder=bmp \
+    --enable-encoder=flv \
+    --enable-encoder=gif \
+    --enable-encoder=mpeg4 \
+    --enable-encoder=png \
+    --enable-encoder=mjpeg \
+    --enable-encoder=yuv4 \
     --enable-cross-compile \
     --cross-prefix=$TOOL_NAME_BASE- \
     --target-os=android \
@@ -53,12 +65,11 @@ function build_library {
     --cxx=$CXX \
     --ar=$AR \
     --nm=$NM \
+    --strip=$STRIP \
     --ranlib=$RANLIB \
     --sysroot=$SYSROOT \
     --extra-cflags="-Os -fpic -DVK_ENABLE_BETA_EXTENSIONS=0 $OPTIMIZE_CFLAGS" \
     --extra-ldflags="$ADDI_LDFLAGS"
-
-    #--strip=$STRIP \
 
     make clean
     #构建并安装
