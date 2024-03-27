@@ -48,13 +48,14 @@ function build_library {
     popd
 }
 
-
-ABI_LIST="arm64-v8a armeabi-v7a x86_64 x86"
-abiArray=(${ABI_LIST// / })
+#bash build_x264.sh "arm64-v8a armeabi-v7a x86_64 x86"
+#targetAbiList="arm64-v8a armeabi-v7a x86_64 x86"
+targetAbiList=$1
+abiArray=(${targetAbiList// / })
 
 for targetAbi in ${abiArray[@]}
 do
    echo $targetAbi
    source $currentDir/../setup-ndk-env.sh $targetAbi
-   build_library $targetAbi $TOOL_NAME_BASE
+   build_library $targetAbi
 done

@@ -31,14 +31,14 @@ fi
 cd $sourceCodeDir
 
 function build_library {
-    HOST=$1
+    targetAbi=$1
 
     mkdir -p $buildPrefix
 
     make clear
 
     ./configure \
-    --host=$HOST \
+    --host=$TOOL_NAME_BASE \
     --prefix=$buildPrefix \
     --bindir=$buildPrefix/bin \
     --libdir=$buildPrefix/libs/$targetAbi \
@@ -51,8 +51,20 @@ function build_library {
     make -j4 install
     #去掉符号信息
     $STRIP -s $buildPrefix/libs/$targetAbi/libmp3lame.so
+    #删减多余的文件
+    pushd $buildPrefix/libs/$targetAbi
+    rm -r libmp3lame.la
+    popd
 }
 
-echo $targetAbi
-source $currentDir/../setup-ndk-env.sh $targetAbi
-build_library $TOOL_NAME_BASE
+#targetAbiList="arm64-v8a armeabi-v7a x86_64 x86"
+targetAbiList=$1
+echo "========================>"$targetAbiList
+abiArray=(${targetAbiList// / })
+
+for targetAbi in ${abiArray[@]}
+do
+   echo $targetAbi
+   source $currentDir/../setup-ndk-env.sh $targetAbi
+   build_library $targetAbi $TOOL_NAME_BASE
+done
